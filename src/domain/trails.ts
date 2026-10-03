@@ -3,6 +3,18 @@ import type { TrailDifficulty, VehicleRating } from './ratings';
 
 export type TrailVisibility = 'public' | 'private' | 'group';
 export type TrailStatus = 'unknown' | 'open' | 'partially_blocked' | 'closed';
+export type PointOfInterestType =
+  | 'stop'
+  | 'viewpoint'
+  | 'water'
+  | 'fuel'
+  | 'food'
+  | 'camping'
+  | 'bathroom'
+  | 'obstacle'
+  | 'crossing'
+  | 'gate'
+  | 'support';
 
 export interface DurationRange {
   min: number;
@@ -15,6 +27,7 @@ export interface TrailVersion {
   authorId: string;
   name: string;
   description: string;
+  region?: string;
   visibility: TrailVisibility;
   geometry: GeoPoint[];
   estimatedDurationMinutes: DurationRange;
@@ -23,6 +36,16 @@ export interface TrailVersion {
   status: TrailStatus;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PointOfInterest {
+  id: string;
+  trailId: string;
+  type: PointOfInterestType;
+  name: string;
+  description: string;
+  coordinate: GeoPoint;
+  verifiedAt?: string;
 }
 
 export type TrailPatch = Partial<Pick<

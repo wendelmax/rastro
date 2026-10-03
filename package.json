@@ -2,6 +2,7 @@
   "name": "rastro",
   "version": "0.1.0",
   "private": true,
+  "allowScripts": ["expo-sqlite"],
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
@@ -14,6 +15,7 @@
   "dependencies": {
     "expo": "~53.0.0",
     "expo-router": "~5.0.0",
+    "expo-sqlite": "~15.2.14",
     "react": "19.0.0",
     "react-native": "0.79.2",
     "react-native-safe-area-context": "5.4.0",

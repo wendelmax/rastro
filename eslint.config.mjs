@@ -20,8 +20,6 @@ export default [
         setImmediate: 'readonly',
       },
     },
-    rules: {
-      'no-unused-vars': 'warn',
-    },
+    rules: {},
   },
 ];
