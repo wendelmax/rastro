@@ -1,0 +1,10 @@
+flowchart LR
+  User[Pessoa que explora trilhas]
+  Rastro[Rastro mobile]
+  Cognito[Amazon Cognito]
+  AWS[API e dados AWS]
+  Maps[Waze / Google Maps / Apple Maps]
+  User --> Rastro
+  Rastro --> Cognito
+  Rastro --> AWS
+  Rastro --> Maps

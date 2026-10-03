@@ -1,0 +1,16 @@
+sequenceDiagram
+  participant UI as Tela mobile
+  participant Local as SQLite
+  participant Sync as ActivityGateway
+  participant API as API Gateway/Lambda
+  participant DB as Aurora
+  participant Cognito as Cognito JWT
+  UI->>Local: salva atividade e amostras
+  UI->>Sync: envia atividade pendente
+  Sync->>API: POST /v1/activities/sync
+  API->>Cognito: valida token
+  API->>DB: upsert por id + sub do autor
+  DB-->>API: synced
+  API-->>Sync: status synced
+  UI->>API: POST /v1/reports
+  API->>DB: salva relato vinculado ao autor

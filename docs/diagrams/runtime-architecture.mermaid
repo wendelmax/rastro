@@ -1,0 +1,24 @@
+flowchart TB
+  subgraph Mobile[Dispositivo]
+    UI[Expo screens]
+    Design[Design system]
+    Domain[Domain + application]
+    SQLite[(SQLite offline)]
+  end
+  subgraph AWS[AWS account]
+    Auth[Cognito]
+    API[API Gateway HTTP]
+    Lambda[Lambda handlers]
+    DB[(Aurora PostgreSQL + PostGIS)]
+    S3[(S3 privado)]
+    CDN[CloudFront]
+  end
+  UI --> Design
+  UI --> Domain
+  Domain --> SQLite
+  Domain --> Auth
+  Domain --> API
+  API --> Lambda
+  Lambda --> DB
+  Lambda --> S3
+  CDN --> S3
