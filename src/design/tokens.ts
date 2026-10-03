@@ -8,14 +8,20 @@ export const rastroColors = {
   clay: '#C96A2B',
   water: '#197A8A',
   success: '#2F7D4A',
+  successSurface: '#DCEEDB',
   warning: '#A86516',
+  warningSurface: '#F8E8C8',
   danger: '#B64A3B',
+  dangerSurface: '#F4D8D2',
+  waterSurface: '#D8EFF0',
+  claySurface: '#F5DFCF',
   border: '#D8D2C5',
   white: '#FFFFFF',
   darkBackground: '#10211B',
   darkSurface: '#1B3329',
   darkInk: '#F6F2E9',
   darkMuted: '#B7C4BC',
+  backdrop: 'rgba(23, 35, 31, 0.5)',
 } as const;
 
 export const rastroSpacing = {

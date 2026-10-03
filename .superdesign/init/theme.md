@@ -6,7 +6,7 @@ Source: `src/design/tokens.ts`.
 
 | Family | Values |
 | --- | --- |
-| Colors | background `#F6F2E9`, surface `#FFFCF5`, ink `#17231F`, muted `#66736B`, forest `#175C45`, forestStrong `#0F3F31`, clay `#C96A2B`, water `#197A8A`, success `#2F7D4A`, warning `#A86516`, danger `#B64A3B` |
+| Colors | background `#F6F2E9`, surface `#FFFCF5`, ink `#17231F`, muted `#66736B`, forest `#175C45`, forestStrong `#0F3F31`, clay `#C96A2B`, water `#197A8A`, success `#2F7D4A`, warning `#A86516`, danger `#B64A3B`, status surfaces in `tokens.ts` |
 | Spacing | xs `4`, sm `8`, md `12`, lg `16`, xl `24`, xxl `32` |
 | Radii | sm `8`, md `12`, lg `18`, pill `999` |
 | Typography | caption 12/17/700, body 15/22/400, bodyLarge 17/25/500, title 24/30/800, display 32/38/800 |

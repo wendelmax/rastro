@@ -31,6 +31,11 @@ paleta local nem importar AWS, Cognito, SQLite ou repositórios a partir de
 | `success` | `#2F7D4A` | aberto, salvo e sincronizado |
 | `warning` | `#A86516` | condição incerta e pendência |
 | `danger` | `#B64A3B` | bloqueio, risco e erro |
+| `successSurface` | `#DCEEDB` | fundo de badge positivo |
+| `warningSurface` | `#F8E8C8` | fundo de badge de atenção |
+| `dangerSurface` | `#F4D8D2` | fundo de badge de risco |
+| `waterSurface` | `#D8EFF0` | fundo de badge de água/mapa |
+| `claySurface` | `#F5DFCF` | fundo de badge de dificuldade |
 
 ## Escalas
 

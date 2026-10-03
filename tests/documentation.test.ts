@@ -37,4 +37,9 @@ describe('project documentation', () => {
     expect(readme).toContain('docs/architecture.md');
     expect(readme).toContain('docs/onboarding.md');
   });
+
+  it('keeps feature styling on the design token source', () => {
+    const reportSheet = readFileSync(path.join(root, 'src/features/quality/ReportContentSheet.tsx'), 'utf8');
+    expect(reportSheet).not.toMatch(/#[0-9A-Fa-f]{6}/);
+  });
 });

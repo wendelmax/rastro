@@ -21,6 +21,11 @@ describe('Rastro Terra design tokens', () => {
       success: '#2F7D4A',
       warning: '#A86516',
       danger: '#B64A3B',
+      successSurface: '#DCEEDB',
+      warningSurface: '#F8E8C8',
+      dangerSurface: '#F4D8D2',
+      waterSurface: '#D8EFF0',
+      claySurface: '#F5DFCF',
     });
   });
 
