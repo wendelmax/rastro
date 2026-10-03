@@ -36,7 +36,13 @@ O produto foi pensado com quatro princípios:
 
 Leia a [especificação do produto](docs/superpowers/specs/2026-10-03-offroad-trails-platform-design.md),
 a [especificação AWS](docs/superpowers/specs/2026-10-03-rastro-aws-migration-design.md)
-e o [plano de migração](docs/superpowers/plans/2026-10-03-rastro-aws-migration.md).
+o [plano de migração](docs/superpowers/plans/2026-10-03-rastro-aws-migration.md),
+a [especificação do design system](docs/superpowers/specs/2026-10-03-rastro-design-system-design.md)
+e o [plano do design system](docs/superpowers/plans/2026-10-03-rastro-design-system.md).
+
+Para onboarding e manutenção, consulte o [design system](docs/design-system.md),
+a [arquitetura](docs/architecture.md), o [guia de onboarding](docs/onboarding.md)
+e os [fluxos do produto](docs/flows/).
 
 ## Arquitetura
 
@@ -121,6 +127,16 @@ não representa esse comportamento completamente.
 - `backend`: handlers Lambda e acesso à RDS Data API/S3;
 - `infra`: stack CDK, schema PostGIS e seed;
 - `app` e `src/features`: rotas e telas mobile.
+
+## Documentação para devs
+
+- [Design system Rastro Terra](docs/design-system.md)
+- [Arquitetura](docs/architecture.md)
+- [Onboarding](docs/onboarding.md)
+- [Fluxo de descoberta e planejamento](docs/flows/explore-trail.md)
+- [Fluxo de registro e contribuição](docs/flows/record-and-contribute.md)
+- [Decisões arquiteturais](docs/decisions/)
+- [Diagramas Mermaid](docs/diagrams/)
 
 As ilustrações desta documentação são conceituais e servem para comunicar o
 produto e a arquitetura; não representam uma tela final nem um template exato

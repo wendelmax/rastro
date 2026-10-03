@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import type { AuthGateway } from '../../application/auth/auth-gateway';
+import { RastroButton, RastroScreen, RastroText } from '../../design/components';
+import { rastroTheme } from '../../design/theme';
 
 interface AuthScreenProps {
   authService: Pick<AuthGateway, 'signIn'>;
@@ -9,71 +11,65 @@ interface AuthScreenProps {
 export function AuthScreen({ authService }: AuthScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState<string>();
+  const [message, setMessage] = useState<{ text: string; tone: 'success' | 'danger' }>();
+  const [submitting, setSubmitting] = useState(false);
 
   async function handleSignIn() {
+    if (submitting) return;
+    setSubmitting(true);
     try {
       await authService.signIn(email, password);
-      setMessage('Login realizado.');
+      setMessage({ text: 'Login realizado.', tone: 'success' });
     } catch {
-      setMessage('Não foi possível entrar. Confira seus dados.');
+      setMessage({ text: 'Não foi possível entrar. Confira seus dados.', tone: 'danger' });
+    } finally {
+      setSubmitting(false);
     }
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.eyebrow}>RASTRO</Text>
-      <Text style={styles.title}>Entre para deixar seu rastro</Text>
-      <TextInput autoCapitalize="none" onChangeText={setEmail} placeholder="Seu e-mail" style={styles.input} value={email} />
-      <TextInput onChangeText={setPassword} placeholder="Sua senha" secureTextEntry style={styles.input} value={password} />
-      <Pressable onPress={() => void handleSignIn()} style={styles.button}>
-        <Text style={styles.buttonText}>Entrar</Text>
-      </Pressable>
-      {message ? <Text style={styles.message}>{message}</Text> : null}
-    </View>
+    <RastroScreen contentContainerStyle={styles.container}>
+      <RastroText color={rastroTheme.colors.clay} variant="caption">RASTRO</RastroText>
+      <RastroText variant="display">Entre para deixar seu rastro</RastroText>
+      <TextInput
+        accessibilityLabel="E-mail"
+        autoCapitalize="none"
+        keyboardType="email-address"
+        onChangeText={setEmail}
+        placeholder="Seu e-mail"
+        placeholderTextColor={rastroTheme.colors.muted}
+        style={styles.input}
+        value={email}
+      />
+      <TextInput
+        accessibilityLabel="Senha"
+        onChangeText={setPassword}
+        placeholder="Sua senha"
+        placeholderTextColor={rastroTheme.colors.muted}
+        secureTextEntry
+        style={styles.input}
+        value={password}
+      />
+      <RastroButton label="Entrar" loading={submitting} onPress={() => void handleSignIn()} />
+      {message ? <RastroText color={message.tone === 'danger' ? rastroTheme.colors.danger : rastroTheme.colors.success} style={styles.message}>{message.text}</RastroText> : null}
+    </RastroScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#F97316',
-    borderRadius: 14,
-    marginTop: 8,
-    padding: 15,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontWeight: '800',
-  },
   container: {
-    backgroundColor: '#F8FAFC',
-    flex: 1,
-    gap: 12,
     justifyContent: 'center',
-    padding: 24,
-  },
-  eyebrow: {
-    color: '#F97316',
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 2,
   },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#CBD5E1',
-    borderRadius: 12,
+    backgroundColor: rastroTheme.colors.surface,
+    borderColor: rastroTheme.colors.border,
+    borderRadius: rastroTheme.radii.md,
     borderWidth: 1,
-    padding: 13,
+    color: rastroTheme.colors.ink,
+    minHeight: 48,
+    padding: rastroTheme.spacing.md,
   },
   message: {
-    color: '#0F766E',
     textAlign: 'center',
-  },
-  title: {
-    color: '#0F172A',
-    fontSize: 28,
-    fontWeight: '800',
-    marginBottom: 12,
   },
 });

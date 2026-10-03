@@ -1,4 +1,6 @@
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { RastroButton, RastroText } from '../../design/components';
+import { rastroTheme } from '../../design/theme';
 
 interface ReportContentSheetProps {
   visible: boolean;
@@ -18,15 +20,13 @@ export function ReportContentSheet({ visible, onClose, onSubmit }: ReportContent
     <Modal animationType="slide" transparent visible={visible} onRequestClose={onClose}>
       <View style={styles.backdrop}>
         <View style={styles.sheet}>
-          <Text style={styles.title}>Sinalizar conteúdo</Text>
+          <RastroText variant="title">Sinalizar conteúdo</RastroText>
           {reasons.map((reason) => (
-            <Pressable key={reason} onPress={() => onSubmit(reason)} style={styles.reason}>
-              <Text style={styles.reasonText}>{reason}</Text>
+            <Pressable accessibilityLabel={reason} accessibilityRole="button" key={reason} onPress={() => onSubmit(reason)} style={styles.reason}>
+              <RastroText>{reason}</RastroText>
             </Pressable>
           ))}
-          <Pressable onPress={onClose} style={styles.close}>
-            <Text style={styles.closeText}>Cancelar</Text>
-          </Pressable>
+          <RastroButton label="Cancelar" onPress={onClose} variant="quiet" />
         </View>
       </View>
     </Modal>
@@ -35,37 +35,22 @@ export function ReportContentSheet({ visible, onClose, onSubmit }: ReportContent
 
 const styles = StyleSheet.create({
   backdrop: {
-    backgroundColor: 'rgba(15, 23, 42, 0.5)',
+    backgroundColor: rastroTheme.colors.backdrop,
     flex: 1,
     justifyContent: 'flex-end',
   },
-  close: {
-    alignItems: 'center',
-    padding: 14,
-  },
-  closeText: {
-    color: '#64748B',
-    fontWeight: '700',
-  },
   reason: {
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: rastroTheme.colors.border,
     borderBottomWidth: 1,
-    paddingVertical: 14,
-  },
-  reasonText: {
-    color: '#334155',
-    fontSize: 15,
+    justifyContent: 'center',
+    minHeight: 52,
+    paddingVertical: rastroTheme.spacing.md,
   },
   sheet: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 20,
-  },
-  title: {
-    color: '#0F172A',
-    fontSize: 20,
-    fontWeight: '800',
-    marginBottom: 8,
+    backgroundColor: rastroTheme.colors.surface,
+    borderTopLeftRadius: rastroTheme.radii.lg,
+    borderTopRightRadius: rastroTheme.radii.lg,
+    gap: rastroTheme.spacing.sm,
+    padding: rastroTheme.spacing.xl,
   },
 });

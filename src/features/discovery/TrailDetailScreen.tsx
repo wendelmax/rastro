@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import type { PointRepository, TrailRepository } from '../../data/repositories';
 import type { PointOfInterest, TrailVersion } from '../../domain/trails';
+import { RastroBadge, RastroButton, RastroCard, RastroScreen, RastroSection, RastroText } from '../../design/components';
+import { rastroTheme } from '../../design/theme';
 import { TrailMap } from '../maps/TrailMap';
 import { buildExternalNavigationUrl, type MapProvider } from '../maps/map-links';
 import { ReportContentSheet } from '../quality/ReportContentSheet';
@@ -35,36 +37,37 @@ export function TrailDetailScreen({ trailId, trailRepository, pointRepository, o
   }, [pointRepository, trailId, trailRepository]);
 
   if (!trail) {
-    return <Text style={styles.loading}>Carregando roteiro...</Text>;
+    return <RastroScreen><RastroText color={rastroTheme.colors.muted}>Carregando roteiro...</RastroText></RastroScreen>;
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.eyebrow}>ROTEIRO</Text>
-      <Text style={styles.title}>{trail.name}</Text>
-      <Text style={styles.description}>{trail.description}</Text>
+    <RastroScreen contentContainerStyle={styles.container} scroll>
+      <RastroText color={rastroTheme.colors.clay} variant="caption">ROTEIRO</RastroText>
+      <RastroText variant="display">{trail.name}</RastroText>
+      <RastroText color={rastroTheme.colors.muted}>{trail.description}</RastroText>
       <TrailMap geometry={trail.geometry} points={points} />
       <View style={styles.metadata}>
         <Metric label="Duração" value={formatDurationRange(trail.estimatedDurationMinutes)} />
         <Metric label="Dificuldade" value={difficultyLabel(trail.generalDifficulty)} />
-        <Metric label="Condição" value={statusLabel(trail.status)} />
+        <Metric label="Condição" value={statusLabel(trail.status)} tone={statusTone(trail.status)} />
       </View>
-      <Text style={styles.sectionTitle}>Pontos úteis</Text>
-      {points.map((point) => <PointRow key={point.id} point={point} />)}
-      <Text style={styles.sectionTitle}>Abrir destino em</Text>
-      <View style={styles.providers}>
-        {(['waze', 'google', 'apple'] as MapProvider[]).map((provider) => (
-          <Pressable
-            key={provider}
-            onPress={() => void Linking.openURL(buildExternalNavigationUrl(provider, trail.geometry[0]!))}
-            style={styles.providerButton}
-          >
-            <Text style={styles.providerLabel}>{providerLabel(provider)}</Text>
-          </Pressable>
-        ))}
-      </View>
-      <Pressable onPress={() => setReportVisible(true)} style={styles.reportButton}>
-        <Text style={styles.reportLabel}>Sinalizar conteúdo</Text>
+      <RastroSection title="Pontos úteis" description={`${points.length} pontos no roteiro`}>
+        {points.map((point) => <PointRow key={point.id} point={point} />)}
+      </RastroSection>
+      <RastroSection title="Abrir destino em">
+        <View style={styles.providers}>
+          {(['waze', 'google', 'apple'] as MapProvider[]).map((provider) => (
+            <RastroButton
+              key={provider}
+              label={providerLabel(provider)}
+              onPress={() => void Linking.openURL(buildExternalNavigationUrl(provider, trail.geometry[0]!))}
+              variant="secondary"
+            />
+          ))}
+        </View>
+      </RastroSection>
+      <Pressable accessibilityRole="button" onPress={() => setReportVisible(true)} style={styles.reportButton}>
+        <RastroText color={rastroTheme.colors.muted} variant="caption">Sinalizar conteúdo</RastroText>
       </Pressable>
       <ReportContentSheet
         visible={reportVisible}
@@ -74,25 +77,25 @@ export function TrailDetailScreen({ trailId, trailRepository, pointRepository, o
           setReportVisible(false);
         }}
       />
-    </ScrollView>
+    </RastroScreen>
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function Metric({ label, value, tone }: { label: string; value: string; tone?: 'success' | 'warning' | 'danger' | 'neutral' }) {
   return (
-    <View style={styles.metric}>
-      <Text style={styles.metricLabel}>{label}</Text>
-      <Text style={styles.metricValue}>{value}</Text>
-    </View>
+    <RastroCard style={styles.metric}>
+      <RastroText color={rastroTheme.colors.muted} variant="caption">{label}</RastroText>
+      {tone ? <RastroBadge label={value} tone={tone} /> : <RastroText variant="bodyLarge">{value}</RastroText>}
+    </RastroCard>
   );
 }
 
 function PointRow({ point }: { point: PointOfInterest }) {
   return (
-    <View style={styles.pointRow}>
-      <Text style={styles.pointName}>{point.name}</Text>
-      <Text style={styles.pointDescription}>{point.description}</Text>
-    </View>
+    <RastroCard variant="outlined">
+      <RastroText variant="bodyLarge">{point.name}</RastroText>
+      <RastroText color={rastroTheme.colors.muted}>{point.description}</RastroText>
+    </RastroCard>
   );
 }
 
@@ -101,110 +104,50 @@ function providerLabel(provider: MapProvider): string {
 }
 
 function statusLabel(status: TrailVersion['status']): string {
-  return {
-    unknown: 'Desconhecida',
+  const labels: Record<TrailVersion['status'], string> = {
+    unknown: 'Condição desconhecida',
     open: 'Aberta',
     partially_blocked: 'Parcialmente bloqueada',
     closed: 'Fechada',
-  }[status];
+  };
+  return labels[status];
+}
+
+function statusTone(status: TrailVersion['status']): 'success' | 'warning' | 'danger' | 'neutral' {
+  const tones: Record<TrailVersion['status'], 'success' | 'warning' | 'danger' | 'neutral'> = {
+    unknown: 'neutral',
+    open: 'success',
+    partially_blocked: 'warning',
+    closed: 'danger',
+  };
+  return tones[status];
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F8FAFC',
-    gap: 14,
-    padding: 20,
-  },
-  description: {
-    color: '#475569',
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  eyebrow: {
-    color: '#F97316',
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 2,
-  },
-  loading: {
-    color: '#475569',
-    padding: 24,
+    paddingBottom: rastroTheme.spacing.xxl,
   },
   metadata: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: rastroTheme.spacing.sm,
   },
   metric: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
     flexGrow: 1,
     minWidth: '30%',
-    padding: 12,
-  },
-  metricLabel: {
-    color: '#64748B',
-    fontSize: 11,
-  },
-  metricValue: {
-    color: '#0F172A',
-    fontSize: 14,
-    fontWeight: '800',
-    marginTop: 4,
-  },
-  pointDescription: {
-    color: '#64748B',
-    fontSize: 13,
-    marginTop: 3,
-  },
-  pointName: {
-    color: '#0F172A',
-    fontSize: 15,
-    fontWeight: '800',
-  },
-  pointRow: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 14,
-  },
-  providerButton: {
-    backgroundColor: '#0F766E',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  providerLabel: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '800',
-  },
-  reportButton: {
-    alignItems: 'center',
-    borderColor: '#CBD5E1',
-    borderRadius: 12,
-    borderWidth: 1,
-    marginTop: 8,
-    padding: 12,
-  },
-  reportLabel: {
-    color: '#475569',
-    fontSize: 13,
-    fontWeight: '800',
   },
   providers: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: rastroTheme.spacing.sm,
   },
-  sectionTitle: {
-    color: '#0F172A',
-    fontSize: 18,
-    fontWeight: '800',
-    marginTop: 8,
-  },
-  title: {
-    color: '#0F172A',
-    fontSize: 32,
-    fontWeight: '800',
+  reportButton: {
+    alignItems: 'center',
+    borderColor: rastroTheme.colors.border,
+    borderRadius: rastroTheme.radii.md,
+    borderWidth: 1,
+    minHeight: 44,
+    justifyContent: 'center',
+    padding: rastroTheme.spacing.md,
   },
 });

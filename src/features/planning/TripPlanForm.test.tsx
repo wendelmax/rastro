@@ -15,8 +15,8 @@ describe('TripPlanForm', () => {
           <TripPlanForm trail={loadedTrail!} points={points} onSubmit={onSubmit} />,
         );
 
-        fireEvent.press(screen.getByText('Fonte de água'));
-        fireEvent.press(screen.getByText('Calcular plano'));
+        fireEvent.press(screen.getByRole('button', { name: 'Fonte de água' }));
+        fireEvent.press(screen.getByRole('button', { name: 'Calcular plano' }));
 
         expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
           movingTimeMinutes: 240,
