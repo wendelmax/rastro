@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import type { VehicleType } from '../../domain/ratings';
+import { RastroButton } from '../../design/components';
 
 interface TrailFiltersProps {
   vehicleType?: VehicleType;
@@ -30,33 +31,14 @@ function FilterButton({ active, label, onPress }: {
   onPress: () => void;
 }) {
   return (
-    <Pressable onPress={onPress} style={[styles.button, active && styles.activeButton]}>
-      <Text style={[styles.label, active && styles.activeLabel]}>{label}</Text>
-    </Pressable>
+    <RastroButton label={label} onPress={onPress} variant={active ? 'primary' : 'quiet'} />
   );
 }
 
 const styles = StyleSheet.create({
-  activeButton: {
-    backgroundColor: '#0F766E',
-  },
-  activeLabel: {
-    color: '#FFFFFF',
-  },
-  button: {
-    backgroundColor: '#E2E8F0',
-    borderRadius: 999,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-  },
   container: {
     flexDirection: 'row',
     gap: 8,
     paddingVertical: 8,
-  },
-  label: {
-    color: '#334155',
-    fontSize: 13,
-    fontWeight: '700',
   },
 });

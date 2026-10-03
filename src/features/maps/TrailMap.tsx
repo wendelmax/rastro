@@ -2,6 +2,7 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import { StyleSheet, View } from 'react-native';
 import type { GeoPoint } from '../../domain/geo';
 import type { PointOfInterest } from '../../domain/trails';
+import { rastroTheme } from '../../design/theme';
 
 interface TrailMapProps {
   geometry: GeoPoint[];
@@ -23,7 +24,7 @@ export function TrailMap({ geometry, points, userLocation, onPointPress }: Trail
           longitudeDelta: 0.04,
         }}
       >
-        <Polyline coordinates={geometry} strokeColor="#F97316" strokeWidth={4} />
+        <Polyline coordinates={geometry} strokeColor={rastroTheme.colors.clay} strokeWidth={4} />
         {points.map((point) => (
           <Marker
             key={point.id}
@@ -41,7 +42,7 @@ export function TrailMap({ geometry, points, userLocation, onPointPress }: Trail
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 18,
+    borderRadius: rastroTheme.radii.lg,
     height: 240,
     overflow: 'hidden',
   },

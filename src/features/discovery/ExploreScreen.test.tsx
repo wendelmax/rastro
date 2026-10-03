@@ -12,7 +12,7 @@ describe('ExploreScreen', () => {
     });
     expect(screen.getByText('Cachoeira do Lobo')).toBeTruthy();
 
-    fireEvent.press(screen.getByText('Quadriciclo'));
+    fireEvent.press(screen.getByRole('button', { name: 'Quadriciclo' }));
 
     await waitFor(() => {
       expect(screen.getByText('Pedra Bruta')).toBeTruthy();
