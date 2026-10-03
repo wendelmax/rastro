@@ -1,5 +1,6 @@
 import { getAppConfig } from '../src/lib/config';
 import { CognitoAuthService } from '../src/data/remote/aws/cognito-auth-service';
+import { SecureAuthSessionStore } from '../src/data/remote/aws/secure-auth-session-store';
 import { createRastroSupabaseClient } from '../src/data/remote/supabase-client';
 import { AuthService } from '../src/application/auth/auth-service';
 import { AuthScreen } from '../src/features/auth/AuthScreen';
@@ -14,7 +15,7 @@ export default function AuthRoute() {
       region: config.awsRegion,
       userPoolId: config.cognitoUserPoolId,
       clientId: config.cognitoUserPoolClientId,
-    })} />;
+    }, undefined, new SecureAuthSessionStore())} />;
   }
   if (!client) {
     return (

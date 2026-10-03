@@ -1,5 +1,6 @@
 import { handleActivities } from './activities';
 import { handleMedia } from './media';
+import { handleReports } from './reports';
 import { handleTrails } from './trails';
 import type { HttpApiEvent } from '../shared/http';
 import type { SqlExecutor } from '../shared/db';
@@ -53,6 +54,23 @@ describe('AWS Lambda handlers', () => {
       rawPath: '/v1/activities/sync',
       requestContext: { http: { method: 'POST', path: '/v1/activities/sync' }, authorizer: { jwt: { claims: { sub: 'user-1' } } } },
       body: JSON.stringify({ activity: { id: 'activity-1', status: 'finished' }, authorId: 'attacker' }),
+    }), db);
+
+    expect(response.statusCode).toBe(200);
+    expect(db.execute).toHaveBeenCalledWith(expect.stringContaining('ON CONFLICT (id)'), expect.arrayContaining([
+      expect.objectContaining({ name: ':author_id', value: { stringValue: 'user-1' } }),
+    ]));
+  });
+
+  it('publishes reports with ownership bound to the JWT subject', async () => {
+    const db: SqlExecutor = { query: jest.fn(), execute: jest.fn().mockResolvedValue([]) };
+    const response = await handleReports(event({
+      rawPath: '/v1/reports',
+      requestContext: { http: { method: 'POST', path: '/v1/reports' }, authorizer: { jwt: { claims: { sub: 'user-1' } } } },
+      body: JSON.stringify({
+        id: 'report:activity-1', activityId: 'activity-1', authorId: 'attacker', title: 'Trilha boa',
+        description: 'Passagem tranquila', visibility: 'public', status: 'published',
+      }),
     }), db);
 
     expect(response.statusCode).toBe(200);

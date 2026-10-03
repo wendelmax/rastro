@@ -41,6 +41,7 @@ export function createMobileServices(options: MobileServicesOptions) {
     publishActivityService: new PublishActivityService({
       activityRepository: options.activityRepository,
       trailRepository,
+      activityGateway,
     }),
   };
 }

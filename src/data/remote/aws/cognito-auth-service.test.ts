@@ -1,4 +1,4 @@
-import { CognitoAuthService, type CognitoPoolFactory, type CognitoUserLike } from './cognito-auth-service';
+import { CognitoAuthService, MemoryAuthSessionStore, type CognitoPoolFactory, type CognitoUserLike } from './cognito-auth-service';
 
 describe('CognitoAuthService', () => {
   it('maps a successful password sign-in to an app session', async () => {
@@ -74,5 +74,21 @@ describe('CognitoAuthService', () => {
     await expect(service.restoreSession()).resolves.toEqual({ userId: 'user-1', accessToken: 'access-1' });
     await service.signOut();
     expect(user.signOut).toHaveBeenCalled();
+  });
+
+  it('restores a persisted app session when the native Cognito user is unavailable', async () => {
+    const store = new MemoryAuthSessionStore();
+    const factory: CognitoPoolFactory = {
+      createUser: jest.fn(),
+      createPool: jest.fn(() => ({ signUp: jest.fn(), getCurrentUser: () => null })),
+    };
+    const service = new CognitoAuthService({
+      region: 'us-east-1',
+      userPoolId: 'pool-1',
+      clientId: 'client-1',
+    }, factory, store);
+    await store.save({ userId: 'user-1', accessToken: 'access-1' });
+
+    await expect(service.restoreSession()).resolves.toEqual({ userId: 'user-1', accessToken: 'access-1' });
   });
 });

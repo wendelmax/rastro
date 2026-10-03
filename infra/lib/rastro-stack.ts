@@ -76,9 +76,10 @@ export class RastroStack extends cdk.Stack {
     });
     const trailHandler = createHandler('TrailHandler', 'src/handlers/trails.handler');
     const activityHandler = createHandler('ActivityHandler', 'src/handlers/activities.handler');
+    const reportHandler = createHandler('ReportHandler', 'src/handlers/reports.handler');
     const mediaHandler = createHandler('MediaHandler', 'src/handlers/media.handler');
     const pointHandler = createHandler('PointHandler', 'src/handlers/points.handler');
-    const handlers = [trailHandler, activityHandler, mediaHandler, pointHandler];
+    const handlers = [trailHandler, activityHandler, reportHandler, mediaHandler, pointHandler];
     for (const handler of handlers) {
       database.secret?.grantRead(handler);
       mediaBucket.grantPut(handler);
@@ -86,6 +87,7 @@ export class RastroStack extends cdk.Stack {
     }
     const publicIntegration = new integrations.HttpLambdaIntegration('TrailIntegration', trailHandler);
     const activityIntegration = new integrations.HttpLambdaIntegration('ActivityIntegration', activityHandler);
+    const reportIntegration = new integrations.HttpLambdaIntegration('ReportIntegration', reportHandler);
     const mediaIntegration = new integrations.HttpLambdaIntegration('MediaIntegration', mediaHandler);
     const pointIntegration = new integrations.HttpLambdaIntegration('PointIntegration', pointHandler);
     api.addRoutes({ path: '/v1/trails', methods: [apigwv2.HttpMethod.GET], integration: publicIntegration });
@@ -95,6 +97,7 @@ export class RastroStack extends cdk.Stack {
     api.addRoutes({ path: '/v1/trails/{trailId}/points', methods: [apigwv2.HttpMethod.GET], integration: pointIntegration });
     api.addRoutes({ path: '/v1/points', methods: [apigwv2.HttpMethod.PUT], integration: pointIntegration, authorizer });
     api.addRoutes({ path: '/v1/activities/sync', methods: [apigwv2.HttpMethod.POST], integration: activityIntegration, authorizer });
+    api.addRoutes({ path: '/v1/reports', methods: [apigwv2.HttpMethod.POST], integration: reportIntegration, authorizer });
     api.addRoutes({ path: '/v1/media/presign', methods: [apigwv2.HttpMethod.POST], integration: mediaIntegration, authorizer });
 
     new secrets.Secret(this, 'RuntimeConfig', { secretName: `rastro/${props.environmentName}/runtime`, generateSecretString: { secretStringTemplate: JSON.stringify({ environment: props.environmentName }), generateStringKey: 'placeholder' } });

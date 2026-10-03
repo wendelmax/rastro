@@ -1,6 +1,7 @@
 import { createFork } from '../../domain/trails';
 import type { ActivityRepository } from '../../data/local/activity-repository';
 import type { TrailRepository } from '../../data/repositories';
+import type { ActivityGateway, PublishedActivityReport } from '../sync/sync-activities';
 
 export interface PublishActivityInput {
   authorId: string;
@@ -10,19 +11,12 @@ export interface PublishActivityInput {
   visibility: 'public' | 'private' | 'group';
 }
 
-export interface ActivityReport {
-  id: string;
-  activityId: string;
-  authorId: string;
-  title: string;
-  description: string;
-  visibility: PublishActivityInput['visibility'];
-  status: 'published';
-}
+export type ActivityReport = PublishedActivityReport;
 
 interface PublishActivityDependencies {
   activityRepository: ActivityRepository;
   trailRepository: TrailRepository;
+  activityGateway?: ActivityGateway;
 }
 
 export class PublishActivityService {
@@ -34,6 +28,10 @@ export class PublishActivityService {
   ): Promise<ActivityReport | Awaited<ReturnType<typeof createFork>>> {
     const activity = await this.dependencies.activityRepository.getById(activityId);
     if (!activity) throw new Error('activity not found');
+    if (this.dependencies.activityGateway) {
+      const syncResult = await this.dependencies.activityGateway.push(activity);
+      if (syncResult.status !== 'synced') throw new Error('activity sync is pending');
+    }
 
     if (input.createTrailFork) {
       if (!activity.trailId) throw new Error('activity is not linked to a trail');
@@ -48,7 +46,7 @@ export class PublishActivityService {
       return fork;
     }
 
-    return {
+    const report: ActivityReport = {
       id: `report:${activityId}`,
       activityId,
       authorId: input.authorId,
@@ -57,5 +55,9 @@ export class PublishActivityService {
       visibility: input.visibility,
       status: 'published',
     };
+    if (this.dependencies.activityGateway?.publishReport) {
+      await this.dependencies.activityGateway.publishReport(report);
+    }
+    return report;
   }
 }

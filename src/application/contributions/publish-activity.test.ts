@@ -61,4 +61,47 @@ describe('PublishActivityService', () => {
     });
     expect((await trailRepository.getById('trail-serra-azul'))?.name).toBe('Serra Azul');
   });
+
+  it('sends the captured activity to the remote gateway before publishing', async () => {
+    const activityRepository = new InMemoryActivityRepository();
+    await activityRepository.save(activity);
+    const { trailRepository } = createDemoRepository();
+    const activityGateway = { push: jest.fn().mockResolvedValue({ status: 'synced' as const }) };
+    const service = new PublishActivityService({ activityRepository, trailRepository, activityGateway });
+
+    await service.publishActivity('activity-1', {
+      authorId: 'user-2',
+      title: 'Condição atual',
+      description: 'Trecho com lama leve.',
+      createTrailFork: false,
+      visibility: 'public',
+    });
+
+    expect(activityGateway.push).toHaveBeenCalledWith(activity);
+  });
+
+  it('sends a published report to the remote gateway when supported', async () => {
+    const activityRepository = new InMemoryActivityRepository();
+    await activityRepository.save(activity);
+    const { trailRepository } = createDemoRepository();
+    const activityGateway = {
+      push: jest.fn().mockResolvedValue({ status: 'synced' as const }),
+      publishReport: jest.fn().mockResolvedValue(undefined),
+    };
+    const service = new PublishActivityService({ activityRepository, trailRepository, activityGateway });
+
+    const result = await service.publishActivity('activity-1', {
+      authorId: 'user-2',
+      title: 'Condição atual',
+      description: 'Trecho com lama leve.',
+      createTrailFork: false,
+      visibility: 'public',
+    });
+
+    expect(activityGateway.publishReport).toHaveBeenCalledWith(expect.objectContaining({
+      activityId: 'activity-1',
+      authorId: 'user-2',
+    }));
+    expect(result).toMatchObject({ status: 'published' });
+  });
 });

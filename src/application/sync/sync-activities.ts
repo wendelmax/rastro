@@ -1,8 +1,19 @@
 import type { Activity } from '../../domain/tracking';
 import type { ActivityRepository } from '../../data/local/activity-repository';
 
+export interface PublishedActivityReport {
+  id: string;
+  activityId: string;
+  authorId: string;
+  title: string;
+  description: string;
+  visibility: 'public' | 'private' | 'group';
+  status: 'published';
+}
+
 export interface ActivityGateway {
   push(activity: Activity): Promise<{ status: 'synced' | 'pending' }>;
+  publishReport?(report: PublishedActivityReport): Promise<void>;
 }
 
 export interface PendingActivityRepository extends ActivityRepository {

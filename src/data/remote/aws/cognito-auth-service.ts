@@ -15,6 +15,20 @@ export interface CognitoConfig {
   clientId: string;
 }
 
+export interface AuthSessionStore {
+  save(session: AppSession): Promise<void>;
+  load(): Promise<AppSession | null>;
+  clear(): Promise<void>;
+}
+
+export class MemoryAuthSessionStore implements AuthSessionStore {
+  private session: AppSession | null = null;
+
+  async save(session: AppSession): Promise<void> { this.session = session; }
+  async load(): Promise<AppSession | null> { return this.session; }
+  async clear(): Promise<void> { this.session = null; }
+}
+
 export interface CognitoSessionLike {
   isValid?: () => boolean;
   getIdToken(): { payload?: { sub?: string }; getJwtToken?: () => string };
@@ -51,6 +65,7 @@ export class CognitoAuthService implements AuthGateway {
   constructor(
     private readonly config: CognitoConfig,
     factory: CognitoPoolFactory = defaultFactory,
+    private readonly sessionStore: AuthSessionStore = new MemoryAuthSessionStore(),
   ) {
     this.pool = factory.createPool(config);
     this.createUser = (email) => factory.createUser(email, this.pool);
@@ -64,8 +79,10 @@ export class CognitoAuthService implements AuthGateway {
       user.authenticateUser(new AuthenticationDetails({ Username: email, Password: password }), {
         onSuccess: (session) => {
           const appSession = mapSession(session, email);
-          setAppSession(appSession);
-          resolve(appSession);
+          void this.sessionStore.save(appSession).then(() => {
+            setAppSession(appSession);
+            resolve(appSession);
+          }).catch(reject);
         },
         onFailure: reject,
       });
@@ -83,20 +100,28 @@ export class CognitoAuthService implements AuthGateway {
 
   restoreSession(): Promise<AppSession | null> {
     const user = this.pool.getCurrentUser();
-    if (!user) return Promise.resolve(null);
+    if (!user) {
+      return this.sessionStore.load().then((session) => {
+        setAppSession(session);
+        return session;
+      });
+    }
     return new Promise((resolve, reject) => {
       user.getSession((error, session) => {
         if (error) return reject(error);
         if (!session || session.isValid?.() === false) return resolve(null);
         const appSession = mapSession(session, '');
-        setAppSession(appSession);
-        resolve(appSession);
+        void this.sessionStore.save(appSession).then(() => {
+          setAppSession(appSession);
+          resolve(appSession);
+        }).catch(reject);
       });
     });
   }
 
   async signOut(): Promise<void> {
     this.pool.getCurrentUser()?.signOut();
+    await this.sessionStore.clear();
     setAppSession(null);
   }
 }
