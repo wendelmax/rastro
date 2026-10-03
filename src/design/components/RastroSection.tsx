@@ -39,5 +39,6 @@ const styles = StyleSheet.create({
   heading: {
     flex: 1,
     gap: rastroTheme.spacing.xs,
+    minWidth: 0,
   },
 });

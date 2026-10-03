@@ -13,9 +13,12 @@ interface ContributeScreenProps {
 export function ContributeScreen({ activityId, service, authorId }: ContributeScreenProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [message, setMessage] = useState<string>();
+  const [message, setMessage] = useState<{ text: string; tone: 'success' | 'danger' }>();
+  const [publishing, setPublishing] = useState(false);
 
   async function publish(createTrailFork: boolean) {
+    if (publishing) return;
+    setPublishing(true);
     try {
       await service.publishActivity(activityId, {
         authorId,
@@ -24,9 +27,14 @@ export function ContributeScreen({ activityId, service, authorId }: ContributeSc
         createTrailFork,
         visibility: 'public',
       });
-      setMessage(createTrailFork ? 'Nova versão da trilha publicada.' : 'Relato publicado.');
+      setMessage({
+        text: createTrailFork ? 'Nova versão da trilha publicada.' : 'Relato publicado.',
+        tone: 'success',
+      });
     } catch {
-      setMessage('Não foi possível publicar esta contribuição.');
+      setMessage({ text: 'Não foi possível publicar esta contribuição.', tone: 'danger' });
+    } finally {
+      setPublishing(false);
     }
   }
 
@@ -51,9 +59,9 @@ export function ContributeScreen({ activityId, service, authorId }: ContributeSc
         style={[styles.input, styles.textArea]}
         value={description}
       />
-      <RastroButton label="Publicar relato" onPress={() => void publish(false)} variant="secondary" />
-      <RastroButton label="Publicar como nova versão" onPress={() => void publish(true)} />
-      {message ? <RastroText color={rastroTheme.colors.success} style={styles.message}>{message}</RastroText> : null}
+      <RastroButton label="Publicar relato" loading={publishing} onPress={() => void publish(false)} variant="secondary" />
+      <RastroButton label="Publicar como nova versão" loading={publishing} onPress={() => void publish(true)} />
+      {message ? <RastroText color={message.tone === 'danger' ? rastroTheme.colors.danger : rastroTheme.colors.success} style={styles.message}>{message.text}</RastroText> : null}
     </RastroScreen>
   );
 }

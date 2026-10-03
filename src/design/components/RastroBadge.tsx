@@ -19,11 +19,11 @@ export function RastroBadge({ label, tone = 'neutral' }: RastroBadgeProps) {
 
 const toneColors: Record<RastroBadgeTone, { background: string; text: string }> = {
   neutral: { background: rastroTheme.colors.background, text: rastroTheme.colors.ink },
-  success: { background: rastroTheme.colors.successSurface, text: rastroTheme.colors.success },
-  warning: { background: rastroTheme.colors.warningSurface, text: rastroTheme.colors.warning },
-  danger: { background: rastroTheme.colors.dangerSurface, text: rastroTheme.colors.danger },
-  water: { background: rastroTheme.colors.waterSurface, text: rastroTheme.colors.water },
-  clay: { background: rastroTheme.colors.claySurface, text: rastroTheme.colors.clay },
+  success: { background: rastroTheme.colors.successSurface, text: rastroTheme.colors.ink },
+  warning: { background: rastroTheme.colors.warningSurface, text: rastroTheme.colors.ink },
+  danger: { background: rastroTheme.colors.dangerSurface, text: rastroTheme.colors.ink },
+  water: { background: rastroTheme.colors.waterSurface, text: rastroTheme.colors.ink },
+  clay: { background: rastroTheme.colors.claySurface, text: rastroTheme.colors.ink },
 };
 
 const styles = StyleSheet.create({
@@ -35,5 +35,6 @@ const styles = StyleSheet.create({
   },
   label: {
     ...rastroTheme.typography.caption,
+    flexShrink: 1,
   },
 });

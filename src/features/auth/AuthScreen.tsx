@@ -11,14 +11,19 @@ interface AuthScreenProps {
 export function AuthScreen({ authService }: AuthScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState<string>();
+  const [message, setMessage] = useState<{ text: string; tone: 'success' | 'danger' }>();
+  const [submitting, setSubmitting] = useState(false);
 
   async function handleSignIn() {
+    if (submitting) return;
+    setSubmitting(true);
     try {
       await authService.signIn(email, password);
-      setMessage('Login realizado.');
+      setMessage({ text: 'Login realizado.', tone: 'success' });
     } catch {
-      setMessage('Não foi possível entrar. Confira seus dados.');
+      setMessage({ text: 'Não foi possível entrar. Confira seus dados.', tone: 'danger' });
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -45,8 +50,8 @@ export function AuthScreen({ authService }: AuthScreenProps) {
         style={styles.input}
         value={password}
       />
-      <RastroButton label="Entrar" onPress={() => void handleSignIn()} />
-      {message ? <RastroText color={rastroTheme.colors.success} style={styles.message}>{message}</RastroText> : null}
+      <RastroButton label="Entrar" loading={submitting} onPress={() => void handleSignIn()} />
+      {message ? <RastroText color={message.tone === 'danger' ? rastroTheme.colors.danger : rastroTheme.colors.success} style={styles.message}>{message.text}</RastroText> : null}
     </RastroScreen>
   );
 }

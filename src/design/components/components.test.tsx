@@ -8,6 +8,7 @@ import {
   RastroSection,
   RastroText,
 } from './index';
+import { rastroTheme } from '../theme';
 
 describe('Rastro design primitives', () => {
   it('renders text variants inside a themed screen and card', () => {
@@ -38,9 +39,31 @@ describe('Rastro design primitives', () => {
     expect(onPress).not.toHaveBeenCalled();
   });
 
+  it('falls back to the primary button style for an invalid runtime variant', () => {
+    const screen = render(
+      <RastroButton label="Ação segura" onPress={jest.fn()} variant={'invalid' as never} />,
+    );
+
+    expect(StyleSheet.flatten(screen.getByRole('button').props.style)).toEqual(
+      expect.objectContaining({ backgroundColor: rastroTheme.colors.forest }),
+    );
+  });
+
   it('renders badge states with text labels instead of color-only meaning', () => {
     const screen = render(<RastroBadge label="Parcialmente bloqueada" tone="warning" />);
     expect(screen.getByText('Parcialmente bloqueada')).toBeTruthy();
+  });
+
+  it('uses dark readable text on pale semantic badge surfaces', () => {
+    const warning = render(<RastroBadge label="Atenção" tone="warning" />);
+    const danger = render(<RastroBadge label="Risco" tone="danger" />);
+
+    expect(StyleSheet.flatten(warning.getByText('Atenção').props.style)).toEqual(
+      expect.objectContaining({ color: rastroTheme.colors.ink }),
+    );
+    expect(StyleSheet.flatten(danger.getByText('Risco').props.style)).toEqual(
+      expect.objectContaining({ color: rastroTheme.colors.ink }),
+    );
   });
 
   it('renders an optional section action with an accessible label', () => {

@@ -33,4 +33,11 @@ describe('TrailCard design component', () => {
     fireEvent.press(screen.getByRole('button', { name: 'Serra de Teste' }));
     expect(onPress).toHaveBeenCalledTimes(1);
   });
+
+  it('keeps an accessible label when the trail title is empty', () => {
+    const screen = render(<TrailCard trail={{ ...trail, name: '' }} />);
+
+    expect(screen.getByRole('button', { name: 'Trilha sem título' })).toBeTruthy();
+    expect(screen.getByText('Trilha sem título')).toBeTruthy();
+  });
 });

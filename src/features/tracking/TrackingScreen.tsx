@@ -18,22 +18,35 @@ export function TrackingScreen({ session, onStart, onFinished }: TrackingScreenP
     elapsedSeconds: 0,
     sampleCount: 0,
   });
+  const [pending, setPending] = useState(false);
 
   async function handlePrimaryAction() {
-    if (status === 'idle') {
-      if (onStart && !(await onStart())) return;
-      await session.start();
-    } else if (status === 'recording') await session.pause();
-    else if (status === 'paused') await session.resume();
-    setStatus(session.status);
-    setSnapshot((current) => ({ ...current, status: session.status }));
+    if (pending) return;
+    setPending(true);
+    try {
+      if (status === 'idle') {
+        if (onStart && !(await onStart())) return;
+        await session.start();
+      } else if (status === 'recording') await session.pause();
+      else if (status === 'paused') await session.resume();
+      setStatus(session.status);
+      setSnapshot((current) => ({ ...current, status: session.status }));
+    } finally {
+      setPending(false);
+    }
   }
 
   async function handleFinish() {
-    const activity = await session.finish();
-    setStatus(activity.status);
-    setSnapshot((current) => ({ ...current, status: activity.status }));
-    onFinished?.(activity);
+    if (pending) return;
+    setPending(true);
+    try {
+      const activity = await session.finish();
+      setStatus(activity.status);
+      setSnapshot((current) => ({ ...current, status: activity.status }));
+      onFinished?.(activity);
+    } finally {
+      setPending(false);
+    }
   }
 
   const primaryLabel = {
@@ -56,10 +69,11 @@ export function TrackingScreen({ session, onStart, onFinished }: TrackingScreenP
       <RastroButton
         disabled={status === 'finished'}
         label={primaryLabel}
+        loading={pending}
         onPress={() => void handlePrimaryAction()}
       />
       {status === 'recording' || status === 'paused' ? (
-        <RastroButton label="Finalizar e salvar" onPress={() => void handleFinish()} variant="secondary" />
+        <RastroButton label="Finalizar e salvar" loading={pending} onPress={() => void handleFinish()} variant="secondary" />
       ) : null}
       <RastroText color={rastroTheme.colors.darkMuted} style={styles.offlineNote} variant="caption">
         As amostras são salvas localmente antes da sincronização.

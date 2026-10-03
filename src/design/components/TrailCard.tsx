@@ -11,11 +11,13 @@ interface TrailCardProps {
 }
 
 export function TrailCard({ trail, onPress }: TrailCardProps) {
+  const trailName = trail.name.trim() || 'Trilha sem título';
+
   return (
-    <Pressable accessibilityLabel={trail.name} accessibilityRole="button" onPress={onPress}>
+    <Pressable accessibilityLabel={trailName} accessibilityRole="button" onPress={onPress}>
       <RastroCard>
         <View style={styles.header}>
-          <RastroText numberOfLines={2} style={styles.title} variant="bodyLarge">{trail.name}</RastroText>
+          <RastroText numberOfLines={2} style={styles.title} variant="bodyLarge">{trailName}</RastroText>
           <RastroBadge label={statusLabel(trail.status)} tone={statusTone(trail.status)} />
         </View>
         <RastroText color={rastroTheme.colors.muted} numberOfLines={2}>{trail.description}</RastroText>
@@ -84,5 +86,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
+    flexShrink: 1,
+    minWidth: 0,
   },
 });

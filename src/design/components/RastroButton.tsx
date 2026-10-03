@@ -20,8 +20,11 @@ export function RastroButton({
   onPress,
   accessibilityLabel,
 }: RastroButtonProps) {
+  const safeVariant: RastroButtonVariant = ['primary', 'secondary', 'quiet', 'danger'].includes(variant as RastroButtonVariant)
+    ? variant
+    : 'primary';
   const isDisabled = disabled || loading;
-  const textColor = variant === 'primary' || variant === 'danger' ? rastroTheme.colors.white : rastroTheme.colors.forest;
+  const textColor = safeVariant === 'primary' || safeVariant === 'danger' ? rastroTheme.colors.white : rastroTheme.colors.forest;
 
   return (
     <Pressable
@@ -30,7 +33,7 @@ export function RastroButton({
       accessibilityState={{ busy: loading, disabled: isDisabled }}
       disabled={isDisabled}
       onPress={onPress}
-      style={[styles.base, styles[variant], isDisabled && styles.disabled]}
+      style={[styles.base, styles[safeVariant], isDisabled && styles.disabled]}
     >
       {loading ? <ActivityIndicator color={textColor} /> : <Text style={[styles.label, { color: textColor }]}>{label}</Text>}
     </Pressable>
