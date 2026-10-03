@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput } from 'react-native';
 import type { PointOfInterest, TrailVersion } from '../../domain/trails';
 import { buildTripPlan } from '../../application/planning/build-trip-plan';
 import type { TripPlanSummary } from '../../domain/planning';
+import { RastroButton, RastroCard, RastroSection, RastroText } from '../../design/components';
+import { rastroTheme } from '../../design/theme';
 
 interface TripPlanFormProps {
   trail: TrailVersion;
@@ -24,107 +26,63 @@ export function TripPlanForm({ trail, points, onSubmit }: TripPlanFormProps) {
     const stopMinutesByPointId = Object.fromEntries(
       selectedPointIds.map((pointId) => [pointId, 15]),
     );
-    onSubmit(buildTripPlan({
-      trail,
-      points,
-      selectedPointIds,
-      departureAt,
-      stopMinutesByPointId,
-    }));
+    onSubmit(buildTripPlan({ trail, points, selectedPointIds, departureAt, stopMinutesByPointId }));
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Saída</Text>
+    <RastroCard>
+      <RastroText color={rastroTheme.colors.muted} variant="caption">Saída</RastroText>
       <TextInput
         accessibilityLabel="Horário de saída"
         onChangeText={setDepartureAt}
         style={styles.input}
         value={departureAt}
       />
-      <Text style={styles.sectionTitle}>Adicionar paradas</Text>
-      {points.map((point) => {
-        const selected = selectedPointIds.includes(point.id);
-        return (
-          <Pressable
-            key={point.id}
-            onPress={() => togglePoint(point.id)}
-            style={[styles.point, selected && styles.selectedPoint]}
-          >
-            <Text style={[styles.pointText, selected && styles.selectedPointText]}>
-              {point.name}
-            </Text>
-            <Text style={[styles.pointHint, selected && styles.selectedPointText]}>
-              {selected ? 'Parada de 15 min adicionada' : point.description}
-            </Text>
-          </Pressable>
-        );
-      })}
-      <Pressable onPress={submit} style={styles.submitButton}>
-        <Text style={styles.submitText}>Calcular plano</Text>
-      </Pressable>
-    </View>
+      <RastroSection title="Adicionar paradas">
+        {points.map((point) => {
+          const selected = selectedPointIds.includes(point.id);
+          return (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ selected }}
+              key={point.id}
+              onPress={() => togglePoint(point.id)}
+              style={[styles.point, selected && styles.selectedPoint]}
+            >
+              <RastroText color={selected ? rastroTheme.colors.white : rastroTheme.colors.ink} variant="bodyLarge">{point.name}</RastroText>
+              <RastroText color={selected ? rastroTheme.colors.white : rastroTheme.colors.muted} variant="caption">
+                {selected ? 'Parada de 15 min adicionada' : point.description}
+              </RastroText>
+            </Pressable>
+          );
+        })}
+      </RastroSection>
+      <RastroButton label="Calcular plano" onPress={submit} />
+    </RastroCard>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    gap: 12,
-    padding: 20,
-  },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#CBD5E1',
-    borderRadius: 12,
+    backgroundColor: rastroTheme.colors.surface,
+    borderColor: rastroTheme.colors.border,
+    borderRadius: rastroTheme.radii.md,
     borderWidth: 1,
-    color: '#0F172A',
-    padding: 12,
-  },
-  label: {
-    color: '#475569',
-    fontSize: 13,
-    fontWeight: '700',
+    color: rastroTheme.colors.ink,
+    minHeight: 48,
+    padding: rastroTheme.spacing.md,
   },
   point: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E2E8F0',
-    borderRadius: 14,
+    backgroundColor: rastroTheme.colors.surface,
+    borderColor: rastroTheme.colors.border,
+    borderRadius: rastroTheme.radii.md,
     borderWidth: 1,
-    padding: 14,
-  },
-  pointHint: {
-    color: '#64748B',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  pointText: {
-    color: '#0F172A',
-    fontSize: 15,
-    fontWeight: '800',
-  },
-  sectionTitle: {
-    color: '#0F172A',
-    fontSize: 18,
-    fontWeight: '800',
-    marginTop: 8,
+    gap: rastroTheme.spacing.xs,
+    minHeight: 60,
+    padding: rastroTheme.spacing.md,
   },
   selectedPoint: {
-    backgroundColor: '#0F766E',
-    borderColor: '#0F766E',
-  },
-  selectedPointText: {
-    color: '#FFFFFF',
-  },
-  submitButton: {
-    alignItems: 'center',
-    backgroundColor: '#F97316',
-    borderRadius: 14,
-    marginTop: 8,
-    padding: 14,
-  },
-  submitText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '800',
+    backgroundColor: rastroTheme.colors.forest,
+    borderColor: rastroTheme.colors.forest,
   },
 });

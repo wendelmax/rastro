@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import type { AuthGateway } from '../../application/auth/auth-gateway';
+import { RastroButton, RastroScreen, RastroText } from '../../design/components';
+import { rastroTheme } from '../../design/theme';
 
 interface AuthScreenProps {
   authService: Pick<AuthGateway, 'signIn'>;
@@ -21,59 +23,48 @@ export function AuthScreen({ authService }: AuthScreenProps) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.eyebrow}>RASTRO</Text>
-      <Text style={styles.title}>Entre para deixar seu rastro</Text>
-      <TextInput autoCapitalize="none" onChangeText={setEmail} placeholder="Seu e-mail" style={styles.input} value={email} />
-      <TextInput onChangeText={setPassword} placeholder="Sua senha" secureTextEntry style={styles.input} value={password} />
-      <Pressable onPress={() => void handleSignIn()} style={styles.button}>
-        <Text style={styles.buttonText}>Entrar</Text>
-      </Pressable>
-      {message ? <Text style={styles.message}>{message}</Text> : null}
-    </View>
+    <RastroScreen contentContainerStyle={styles.container}>
+      <RastroText color={rastroTheme.colors.clay} variant="caption">RASTRO</RastroText>
+      <RastroText variant="display">Entre para deixar seu rastro</RastroText>
+      <TextInput
+        accessibilityLabel="E-mail"
+        autoCapitalize="none"
+        keyboardType="email-address"
+        onChangeText={setEmail}
+        placeholder="Seu e-mail"
+        placeholderTextColor={rastroTheme.colors.muted}
+        style={styles.input}
+        value={email}
+      />
+      <TextInput
+        accessibilityLabel="Senha"
+        onChangeText={setPassword}
+        placeholder="Sua senha"
+        placeholderTextColor={rastroTheme.colors.muted}
+        secureTextEntry
+        style={styles.input}
+        value={password}
+      />
+      <RastroButton label="Entrar" onPress={() => void handleSignIn()} />
+      {message ? <RastroText color={rastroTheme.colors.success} style={styles.message}>{message}</RastroText> : null}
+    </RastroScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#F97316',
-    borderRadius: 14,
-    marginTop: 8,
-    padding: 15,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontWeight: '800',
-  },
   container: {
-    backgroundColor: '#F8FAFC',
-    flex: 1,
-    gap: 12,
     justifyContent: 'center',
-    padding: 24,
-  },
-  eyebrow: {
-    color: '#F97316',
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 2,
   },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#CBD5E1',
-    borderRadius: 12,
+    backgroundColor: rastroTheme.colors.surface,
+    borderColor: rastroTheme.colors.border,
+    borderRadius: rastroTheme.radii.md,
     borderWidth: 1,
-    padding: 13,
+    color: rastroTheme.colors.ink,
+    minHeight: 48,
+    padding: rastroTheme.spacing.md,
   },
   message: {
-    color: '#0F766E',
     textAlign: 'center',
-  },
-  title: {
-    color: '#0F172A',
-    fontSize: 28,
-    fontWeight: '800',
-    marginBottom: 12,
   },
 });

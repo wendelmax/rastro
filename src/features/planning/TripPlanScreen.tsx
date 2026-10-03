@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
 import type { PointRepository, TrailRepository } from '../../data/repositories';
 import type { PointOfInterest, TrailVersion } from '../../domain/trails';
 import type { TripPlanSummary } from '../../domain/planning';
+import { RastroScreen, RastroText } from '../../design/components';
+import { rastroTheme } from '../../design/theme';
 import { TripPlanForm } from './TripPlanForm';
 import { TripSummary } from './TripSummary';
 
@@ -27,40 +28,16 @@ export function TripPlanScreen({ trailId, trailRepository, pointRepository }: Tr
     });
   }, [pointRepository, trailId, trailRepository]);
 
-  if (!trail) return <Text style={styles.loading}>Carregando planejamento...</Text>;
+  if (!trail) {
+    return <RastroScreen><RastroText color={rastroTheme.colors.muted}>Carregando planejamento...</RastroText></RastroScreen>;
+  }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.eyebrow}>PLANEJAR SAÍDA</Text>
-      <Text style={styles.title}>{trail.name}</Text>
+    <RastroScreen scroll>
+      <RastroText color={rastroTheme.colors.clay} variant="caption">PLANEJAR SAÍDA</RastroText>
+      <RastroText variant="display">{trail.name}</RastroText>
       <TripPlanForm trail={trail} points={points} onSubmit={setSummary} />
       {summary ? <TripSummary summary={summary} /> : null}
-    </ScrollView>
+    </RastroScreen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#F8FAFC',
-    flexGrow: 1,
-  },
-  eyebrow: {
-    color: '#F97316',
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 2,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-  loading: {
-    color: '#475569',
-    padding: 24,
-  },
-  title: {
-    color: '#0F172A',
-    fontSize: 30,
-    fontWeight: '800',
-    paddingHorizontal: 20,
-    paddingTop: 6,
-  },
-});

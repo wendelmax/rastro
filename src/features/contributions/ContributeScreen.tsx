@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import type { PublishActivityService } from '../../application/contributions/publish-activity';
+import { RastroButton, RastroScreen, RastroText } from '../../design/components';
+import { rastroTheme } from '../../design/theme';
 
 interface ContributeScreenProps {
   activityId: string;
@@ -29,73 +31,51 @@ export function ContributeScreen({ activityId, service, authorId }: ContributeSc
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Compartilhe o que encontrou</Text>
-      <TextInput onChangeText={setTitle} placeholder="Título da atualização" style={styles.input} value={title} />
+    <RastroScreen contentContainerStyle={styles.container} scroll>
+      <RastroText variant="display">Compartilhe o que encontrou</RastroText>
+      <RastroText color={rastroTheme.colors.muted}>Ajude outras pessoas a sair preparadas.</RastroText>
       <TextInput
+        accessibilityLabel="Título da atualização"
+        onChangeText={setTitle}
+        placeholder="Título da atualização"
+        placeholderTextColor={rastroTheme.colors.muted}
+        style={styles.input}
+        value={title}
+      />
+      <TextInput
+        accessibilityLabel="Condição da trilha, água, obstáculos e dicas"
         multiline
         onChangeText={setDescription}
         placeholder="Condição da trilha, água, obstáculos e dicas"
+        placeholderTextColor={rastroTheme.colors.muted}
         style={[styles.input, styles.textArea]}
         value={description}
       />
-      <Pressable onPress={() => void publish(false)} style={styles.secondaryButton}>
-        <Text style={styles.secondaryText}>Publicar relato</Text>
-      </Pressable>
-      <Pressable onPress={() => void publish(true)} style={styles.primaryButton}>
-        <Text style={styles.primaryText}>Publicar como nova versão</Text>
-      </Pressable>
-      {message ? <Text style={styles.message}>{message}</Text> : null}
-    </View>
+      <RastroButton label="Publicar relato" onPress={() => void publish(false)} variant="secondary" />
+      <RastroButton label="Publicar como nova versão" onPress={() => void publish(true)} />
+      {message ? <RastroText color={rastroTheme.colors.success} style={styles.message}>{message}</RastroText> : null}
+    </RastroScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F8FAFC',
-    flex: 1,
-    gap: 12,
-    padding: 24,
+    paddingBottom: rastroTheme.spacing.xxl,
   },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#CBD5E1',
-    borderRadius: 12,
+    backgroundColor: rastroTheme.colors.surface,
+    borderColor: rastroTheme.colors.border,
+    borderRadius: rastroTheme.radii.md,
     borderWidth: 1,
-    padding: 13,
+    color: rastroTheme.colors.ink,
+    minHeight: 48,
+    padding: rastroTheme.spacing.md,
   },
   message: {
-    color: '#0F766E',
     textAlign: 'center',
-  },
-  primaryButton: {
-    alignItems: 'center',
-    backgroundColor: '#F97316',
-    borderRadius: 14,
-    padding: 15,
-  },
-  primaryText: {
-    color: '#FFFFFF',
-    fontWeight: '800',
-  },
-  secondaryButton: {
-    alignItems: 'center',
-    backgroundColor: '#0F766E',
-    borderRadius: 14,
-    padding: 15,
-  },
-  secondaryText: {
-    color: '#FFFFFF',
-    fontWeight: '800',
   },
   textArea: {
     minHeight: 120,
     textAlignVertical: 'top',
-  },
-  title: {
-    color: '#0F172A',
-    fontSize: 28,
-    fontWeight: '800',
-    marginBottom: 10,
   },
 });

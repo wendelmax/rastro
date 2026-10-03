@@ -8,7 +8,7 @@ describe('TrackingScreen', () => {
     const session = recordActivity(new InMemoryActivityRepository(), () => 'activity-screen');
     const screen = render(<TrackingScreen session={session} />);
 
-    fireEvent.press(screen.getByText('Iniciar rastreamento'));
+    fireEvent.press(screen.getByRole('button', { name: 'Iniciar rastreamento' }));
 
     expect(await screen.findByText('Rastreando')).toBeTruthy();
     expect(screen.getByText('0 pontos')).toBeTruthy();
