@@ -1,0 +1,13 @@
+{
+  "name": "@rastro/infra",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "synth": "cdk synth",
+    "test": "jest"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.272.0",
+    "constructs": "^10.4.2"
+  }
+}

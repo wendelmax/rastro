@@ -46,6 +46,8 @@ export async function handleTrails(event: HttpApiEvent, db: SqlExecutor = create
   }
 }
 
+export const handler = handleTrails;
+
 function parameters(values: Record<string, unknown>): SqlParameter[] {
   return Object.entries(values).map(([name, value]) => ({
     name: `:${name}`,

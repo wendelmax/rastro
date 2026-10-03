@@ -1,0 +1,6 @@
+{
+  "app": "npx ts-node --prefer-ts-exts -P infra/tsconfig.json infra/bin/rastro.ts",
+  "context": {
+    "environmentName": "dev"
+  }
+}

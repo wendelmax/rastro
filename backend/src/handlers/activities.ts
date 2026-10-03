@@ -25,6 +25,8 @@ export async function handleActivities(event: HttpApiEvent, db: SqlExecutor = cr
   }
 }
 
+export const handler = handleActivities;
+
 function parameters(values: Record<string, unknown>): SqlParameter[] {
   return Object.entries(values).map(([name, value]) => ({
     name: `:${name}`,

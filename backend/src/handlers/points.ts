@@ -19,3 +19,5 @@ export async function handlePoints(event: HttpApiEvent, db: SqlExecutor = create
     return errorResponse(error);
   }
 }
+
+export const handler = handlePoints;

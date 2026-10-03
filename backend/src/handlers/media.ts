@@ -20,3 +20,5 @@ export async function handleMedia(event: HttpApiEvent, presigner: MediaPresigner
     return errorResponse(error);
   }
 }
+
+export const handler = handleMedia;
