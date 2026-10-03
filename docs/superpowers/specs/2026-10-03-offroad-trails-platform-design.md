@@ -108,7 +108,7 @@ Cada ponto terá descrição, coordenada aproximada ou exata conforme a polític
 - escolher um roteiro;
 - adicionar, remover e ordenar pontos de parada;
 - informar horário de saída e duração das paradas;
-- calcular horário estimado de chegada e retorno;
+- calcular horário estimado de chegada ao fim e, opcionalmente, retorno com margem definida pelo usuário;
 - convidar participantes por link ou grupo;
 - compartilhar um resumo do plano;
 - baixar roteiro, pontos e dados essenciais para uso offline; a disponibilidade offline das imagens cartográficas dependerá do provedor nativo e não será uma promessa do MVP.
