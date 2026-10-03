@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Rastro",
+    "slug": "rastro",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "rastro",
+    "userInterfaceStyle": "automatic",
+    "plugins": ["expo-router"],
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "O Rastro usa sua localização para mostrar e registrar trilhas.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "O Rastro usa sua localização em segundo plano enquanto você registra uma atividade."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0F172A"
+      },
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "ACCESS_BACKGROUND_LOCATION"]
+    }
+  }
+}
