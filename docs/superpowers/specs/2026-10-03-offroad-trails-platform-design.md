@@ -1,4 +1,6 @@
-# Plataforma Aberta de Trilhas Off-road — Especificação de Produto e Arquitetura
+# Rastro — Plataforma Aberta de Trilhas Off-road
+
+Especificação de Produto e Arquitetura
 
 **Data:** 2026-10-03  
 **Status:** proposta para revisão do usuário
@@ -109,7 +111,7 @@ Cada ponto terá descrição, coordenada aproximada ou exata conforme a polític
 - calcular horário estimado de chegada e retorno;
 - convidar participantes por link ou grupo;
 - compartilhar um resumo do plano;
-- baixar roteiro, pontos e dados essenciais para uso offline.
+- baixar roteiro, pontos e dados essenciais para uso offline; a disponibilidade offline das imagens cartográficas dependerá do provedor nativo e não será uma promessa do MVP.
 
 No MVP, o planejamento será de uma saída baseada em um roteiro principal. Expedições com várias trilhas ou vários dias ficam fora do primeiro corte.
 
@@ -154,6 +156,10 @@ O domínio deve separar a geometria publicada (`TrailVersion`) da execução rea
 
 - React Native com Expo e TypeScript;
 - Expo Router para navegação;
+- `react-native-maps` encapsulado atrás de um adaptador de mapas;
+- `expo-location` e `expo-task-manager` para localização em primeiro e segundo plano;
+- `expo-sqlite` para gravações, roteiros e pontos essenciais em modo local-first;
+- Jest com `jest-expo` e React Native Testing Library para testes unitários e de fluxo;
 - camada de domínio independente da UI;
 - armazenamento local para sessões, gravações em andamento e pacotes offline;
 - localização com suporte a execução em segundo plano conforme permissões da plataforma;
@@ -164,6 +170,7 @@ O domínio deve separar a geometria publicada (`TrailVersion`) da execução rea
 - Supabase Auth para identidade;
 - PostgreSQL com PostGIS para geometrias e consultas por proximidade;
 - Storage para fotos e vídeos;
+- cliente Supabase isolado em adaptadores de infraestrutura;
 - Row Level Security para separar conteúdo público, privado e de grupos;
 - camada de repositórios no app para permitir testes sem rede e futura troca de backend.
 
@@ -171,7 +178,7 @@ O domínio deve separar a geometria publicada (`TrailVersion`) da execução rea
 
 - links externos para Waze, Google Maps e Apple Maps;
 - importação/exportação GPX como extensão posterior, não necessária para o primeiro fluxo;
-- mapas offline limitados ao pacote do roteiro no MVP; cache cartográfico completo depende do provedor escolhido.
+- pacote offline do MVP inclui geometria, pontos, metadados e relatos essenciais; cache cartográfico completo depende do provedor escolhido.
 
 ## Fora do MVP
 
