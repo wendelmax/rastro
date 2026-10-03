@@ -14,4 +14,26 @@ describe('getAppConfig', () => {
       supabaseUrl: 'not-a-url',
     })).toThrow('SUPABASE_URL');
   });
+
+  it('reads public AWS configuration and validates the API URL', () => {
+    expect(getAppConfig({
+      environment: 'development',
+      awsRegion: 'us-east-1',
+      awsApiUrl: 'https://api.example.com',
+      cognitoUserPoolId: 'us-east-1_pool',
+      cognitoUserPoolClientId: 'client-id',
+    })).toMatchObject({
+      awsRegion: 'us-east-1',
+      awsApiUrl: 'https://api.example.com',
+      cognitoUserPoolId: 'us-east-1_pool',
+      cognitoUserPoolClientId: 'client-id',
+    });
+  });
+
+  it('rejects a malformed AWS API URL outside the test environment', () => {
+    expect(() => getAppConfig({
+      environment: 'development',
+      awsApiUrl: 'not-a-url',
+    })).toThrow('AWS_API_URL');
+  });
 });
