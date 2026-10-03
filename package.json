@@ -4,7 +4,9 @@
   "private": true,
   "allowScripts": [
     "expo-sqlite",
-    "react-native-maps"
+    "react-native-maps",
+    "expo-location",
+    "expo-task-manager"
   ],
   "main": "expo-router/entry",
   "scripts": {
@@ -17,8 +19,10 @@
   },
   "dependencies": {
     "expo": "~53.0.0",
+    "expo-location": "~18.1.6",
     "expo-router": "~5.0.0",
     "expo-sqlite": "~15.2.14",
+    "expo-task-manager": "~13.1.6",
     "react": "19.0.0",
     "react-native": "0.79.2",
     "react-native-maps": "1.20.1",
