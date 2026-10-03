@@ -6,7 +6,15 @@
     "orientation": "portrait",
     "scheme": "rastro",
     "userInterfaceStyle": "automatic",
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "O Rastro usa sua localização em segundo plano enquanto você registra uma atividade."
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
