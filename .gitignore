@@ -2,5 +2,8 @@ node_modules/
 .expo/
 dist/
 coverage/
+cdk.out/
+backend/dist/
+infra/cdk.out/
 .env
 *.log
