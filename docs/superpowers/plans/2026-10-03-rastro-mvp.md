@@ -192,7 +192,7 @@ git commit -m "feat: add public trail discovery and map details"
 - Create: `app/trails/[trailId]/plan.tsx`, `src/features/planning/TripPlanForm.tsx`, `src/features/planning/TripSummary.tsx`
 
 **Interfaces:**
-- `TripPlanInput { trail: TrailVersion; selectedPointIds: string[]; departureAt: string; stopMinutesByPointId: Record<string, number>; returnBufferMinutes?: number }`.
+- `TripPlanInput { trail: TrailVersion; points: PointOfInterest[]; selectedPointIds: string[]; departureAt: string; stopMinutesByPointId: Record<string, number>; returnBufferMinutes?: number }`.
 - `buildTripPlan(input: TripPlanInput): TripPlanSummary`.
 - `TripPlanSummary { movingTimeMinutes: number; stopTimeMinutes: number; finishAt: string; returnAt?: string; warnings: string[] }`.
 
