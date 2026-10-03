@@ -5,7 +5,7 @@ jest.mock('react-native-maps', () => ({
   Polyline: 'Polyline',
 }));
 
-import { render, waitFor } from '@testing-library/react-native';
+import { fireEvent, render, waitFor } from '@testing-library/react-native';
 import { createDemoRepository } from '../../data/demo/demo-trails';
 import { TrailDetailScreen } from './TrailDetailScreen';
 
@@ -27,5 +27,24 @@ describe('TrailDetailScreen', () => {
     expect(screen.getByText('Moderada')).toBeTruthy();
     expect(screen.getByText('Fonte de água')).toBeTruthy();
     expect(screen.getByText('Mirante para fotos')).toBeTruthy();
+  });
+
+  it('opens content reporting and sends the selected reason', async () => {
+    const { trailRepository, pointRepository } = createDemoRepository();
+    const onReport = jest.fn();
+    const screen = render(
+      <TrailDetailScreen
+        trailId="trail-serra-azul"
+        trailRepository={trailRepository}
+        pointRepository={pointRepository}
+        onReport={onReport}
+      />,
+    );
+
+    await waitFor(() => expect(screen.getByText('Sinalizar conteúdo')).toBeTruthy());
+    fireEvent.press(screen.getByText('Sinalizar conteúdo'));
+    fireEvent.press(screen.getByText('Informação desatualizada'));
+
+    expect(onReport).toHaveBeenCalledWith('Informação desatualizada');
   });
 });

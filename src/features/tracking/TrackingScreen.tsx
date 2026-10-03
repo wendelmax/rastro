@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import type { ActivitySnapshot, TrackingSession, TrackingStatus } from '../../domain/tracking';
+import type { Activity, ActivitySnapshot, TrackingSession, TrackingStatus } from '../../domain/tracking';
 
 interface TrackingScreenProps {
   session: TrackingSession;
+  onStart?: () => Promise<boolean>;
+  onFinished?: (activity: Activity) => void;
 }
 
-export function TrackingScreen({ session }: TrackingScreenProps) {
+export function TrackingScreen({ session, onStart, onFinished }: TrackingScreenProps) {
   const [status, setStatus] = useState<TrackingStatus>(session.status);
   const [snapshot, setSnapshot] = useState<ActivitySnapshot>({
     status: session.status,
@@ -16,7 +18,10 @@ export function TrackingScreen({ session }: TrackingScreenProps) {
   });
 
   async function handlePrimaryAction() {
-    if (status === 'idle') await session.start();
+    if (status === 'idle') {
+      if (onStart && !(await onStart())) return;
+      await session.start();
+    }
     else if (status === 'recording') await session.pause();
     else if (status === 'paused') await session.resume();
     setStatus(session.status);
@@ -27,6 +32,7 @@ export function TrackingScreen({ session }: TrackingScreenProps) {
     const activity = await session.finish();
     setStatus(activity.status);
     setSnapshot((current) => ({ ...current, status: activity.status }));
+    onFinished?.(activity);
   }
 
   const primaryLabel = {

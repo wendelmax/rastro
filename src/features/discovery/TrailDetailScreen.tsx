@@ -4,17 +4,20 @@ import type { PointRepository, TrailRepository } from '../../data/repositories';
 import type { PointOfInterest, TrailVersion } from '../../domain/trails';
 import { TrailMap } from '../maps/TrailMap';
 import { buildExternalNavigationUrl, type MapProvider } from '../maps/map-links';
+import { ReportContentSheet } from '../quality/ReportContentSheet';
 import { difficultyLabel, formatDurationRange } from './TrailCard';
 
 interface TrailDetailScreenProps {
   trailId: string;
   trailRepository: TrailRepository;
   pointRepository: PointRepository;
+  onReport?: (reason: string) => void;
 }
 
-export function TrailDetailScreen({ trailId, trailRepository, pointRepository }: TrailDetailScreenProps) {
+export function TrailDetailScreen({ trailId, trailRepository, pointRepository, onReport }: TrailDetailScreenProps) {
   const [trail, setTrail] = useState<TrailVersion | null>(null);
   const [points, setPoints] = useState<PointOfInterest[]>([]);
+  const [reportVisible, setReportVisible] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -60,6 +63,17 @@ export function TrailDetailScreen({ trailId, trailRepository, pointRepository }:
           </Pressable>
         ))}
       </View>
+      <Pressable onPress={() => setReportVisible(true)} style={styles.reportButton}>
+        <Text style={styles.reportLabel}>Sinalizar conteúdo</Text>
+      </Pressable>
+      <ReportContentSheet
+        visible={reportVisible}
+        onClose={() => setReportVisible(false)}
+        onSubmit={(reason) => {
+          onReport?.(reason);
+          setReportVisible(false);
+        }}
+      />
     </ScrollView>
   );
 }
@@ -162,6 +176,19 @@ const styles = StyleSheet.create({
   providerLabel: {
     color: '#FFFFFF',
     fontSize: 12,
+    fontWeight: '800',
+  },
+  reportButton: {
+    alignItems: 'center',
+    borderColor: '#CBD5E1',
+    borderRadius: 12,
+    borderWidth: 1,
+    marginTop: 8,
+    padding: 12,
+  },
+  reportLabel: {
+    color: '#475569',
+    fontSize: 13,
     fontWeight: '800',
   },
   providers: {
