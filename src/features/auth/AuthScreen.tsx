@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import type { AuthService } from '../../application/auth/auth-service';
+import type { AuthGateway } from '../../application/auth/auth-gateway';
 
 interface AuthScreenProps {
-  authService: AuthService;
+  authService: Pick<AuthGateway, 'signIn'>;
 }
 
 export function AuthScreen({ authService }: AuthScreenProps) {
