@@ -1,5 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import { mobileMvpServices } from '../../src/application/mvp/mobile-services';
+import { getAppSession } from '../../src/application/auth/session-store';
 import { ContributeScreen } from '../../src/features/contributions/ContributeScreen';
 
 export default function ContributeRoute() {
@@ -7,7 +8,7 @@ export default function ContributeRoute() {
   return (
     <ContributeScreen
       activityId={activityId}
-      authorId="demo-user"
+      authorId={getAppSession()?.userId ?? 'demo-user'}
       service={mobileMvpServices.publishActivityService}
     />
   );

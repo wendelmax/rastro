@@ -7,6 +7,7 @@ import {
 } from 'amazon-cognito-identity-js';
 import type { AuthGateway } from '../../../application/auth/auth-gateway';
 import type { AppSession, EmailVerificationRequired } from '../../../application/auth/auth-service';
+import { setAppSession } from '../../../application/auth/session-store';
 
 export interface CognitoConfig {
   region: string;
@@ -61,7 +62,11 @@ export class CognitoAuthService implements AuthGateway {
     return new Promise((resolve, reject) => {
       const user = this.createUser(email);
       user.authenticateUser(new AuthenticationDetails({ Username: email, Password: password }), {
-        onSuccess: (session) => resolve(mapSession(session, email)),
+        onSuccess: (session) => {
+          const appSession = mapSession(session, email);
+          setAppSession(appSession);
+          resolve(appSession);
+        },
         onFailure: reject,
       });
     });
@@ -83,13 +88,16 @@ export class CognitoAuthService implements AuthGateway {
       user.getSession((error, session) => {
         if (error) return reject(error);
         if (!session || session.isValid?.() === false) return resolve(null);
-        resolve(mapSession(session, ''));
+        const appSession = mapSession(session, '');
+        setAppSession(appSession);
+        resolve(appSession);
       });
     });
   }
 
   async signOut(): Promise<void> {
     this.pool.getCurrentUser()?.signOut();
+    setAppSession(null);
   }
 }
 

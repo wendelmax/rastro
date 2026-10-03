@@ -1,14 +1,12 @@
 import { useRouter } from 'expo-router';
-import { createDemoRepository } from '../../src/data/demo/demo-trails';
+import { mobileMvpServices } from '../../src/application/mvp/mobile-services';
 import { ExploreScreen } from '../../src/features/discovery/ExploreScreen';
-
-const repository = createDemoRepository();
 
 export default function ExploreRoute() {
   const router = useRouter();
   return (
     <ExploreScreen
-      trailRepository={repository.trailRepository}
+      trailRepository={mobileMvpServices.trailRepository}
       onSelectTrail={(trailId) => router.push(`/trails/${trailId}`)}
     />
   );
