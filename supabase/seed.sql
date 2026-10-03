@@ -1,0 +1,3 @@
+-- O catálogo demo do app fica em src/data/demo/demo-trails.ts para permitir
+-- desenvolvimento sem credenciais. Dados reais devem ser criados por usuários
+-- autenticados após aplicar a migration 001_rastro_schema.sql.
